@@ -18,7 +18,9 @@
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "styles": ["src/styles.scss"],
-            "assets": []
+            "assets": [
+              { "glob": "runtime-config.json", "input": "../../tmp", "output": "assets" }
+            ]
           },
           "configurations": {
             "production": {
@@ -38,6 +40,9 @@
         },
         "serve": {
           "builder": "@angular/build:dev-server",
+          "options": {
+            "proxyConfig": "../../tmp/proxy.conf.json"
+          },
           "configurations": {
             "production": { "buildTarget": "jornadas-laborales:build:production" },
             "development": { "buildTarget": "jornadas-laborales:build:development" }

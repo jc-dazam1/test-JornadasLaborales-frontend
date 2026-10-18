@@ -9,7 +9,7 @@ Angular Material workspace for planning labor schedules, reviewing weekly covera
 
 ## Local setup
 
-1. Copy `.env.example` to `.env` and adjust the local PostgreSQL values if needed.
+1. Copy `.env.example` to `.env`; set `API_BASE_URL` to the backend base URL (for example, `http://localhost:5000/api`) and adjust PostgreSQL values if needed.
 2. Start PostgreSQL with `docker compose up -d postgres`.
 3. Install frontend dependencies with `npm --prefix services/web install`.
 4. Install API dependencies with `npm --prefix services/functions install`.
@@ -36,3 +36,5 @@ The Angular source is organized by responsibility under `services/web/src/app/`:
 - `shared/ui/` contains reusable UI components shared across features.
 
 Dependencies point inward: features and presentation call application use cases; infrastructure implements application ports and wires dependencies in `app.providers.ts`. Replacing the mock API with a real HTTP adapter should only require changing that provider configuration and implementing the existing `ApiClient` port.
+
+The frontend reads `API_BASE_URL` from the workspace `.env` when starting or building. In development, Angular proxies `/api` to the configured backend to avoid browser CORS restrictions. Production builds use the configured backend URL directly, so that deployment must allow the frontend origin or provide a reverse proxy.
