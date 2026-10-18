@@ -1,0 +1,1 @@
+export type DataState = 'loading' | 'error' | 'empty' | 'data';

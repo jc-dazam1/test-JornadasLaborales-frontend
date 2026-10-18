@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
-import { ApiClient } from './api-client';
-import { CalendarDay, DashboardSummary, Employee, HealthResponse } from './models';
-import { PreviewStateService } from '../preview-state.service';
+import { ApiClient } from '../../application/ports/api-client';
+import { CalendarDay, DashboardSummary, Employee, HealthResponse } from '../../domain/models';
+import { PREVIEW_SCENARIO } from '../di/api.tokens';
 
 const schedules = [
   { employee: 'Ana García', shift: '08:00–16:00', hours: 8, team: 'Operaciones', status: 'Confirmed' as const },
@@ -25,7 +25,7 @@ const calendar: CalendarDay[] = [
 
 @Injectable()
 export class MockApiClient implements ApiClient {
-  private readonly preview = inject(PreviewStateService);
+  private readonly preview = inject(PREVIEW_SCENARIO);
 
   getDashboard(): Promise<DashboardSummary> {
     return this.respond({ plannedShifts: 128, coverage: 94, pendingApprovals: 12, averageHours: 8.1, schedules });

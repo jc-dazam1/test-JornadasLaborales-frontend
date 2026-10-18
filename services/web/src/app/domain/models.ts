@@ -38,4 +38,3 @@ export interface HealthResponse {
   services: Record<string, 'healthy' | 'unhealthy'>;
 }
 
-export type DataState = 'loading' | 'error' | 'empty' | 'data';

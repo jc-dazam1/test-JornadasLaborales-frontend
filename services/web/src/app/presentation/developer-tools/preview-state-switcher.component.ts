@@ -1,7 +1,6 @@
 import { Component, inject, isDevMode } from '@angular/core';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
-import { DataState } from './api/models';
-import { PreviewStateService } from './preview-state.service';
+import { ManagePreviewScenarioUseCase } from '../../application/use-cases/manage-preview-scenario.use-case';
 
 @Component({
   selector: 'app-preview-state-switcher',
@@ -17,6 +16,6 @@ import { PreviewStateService } from './preview-state.service';
   styles: [`:host { position: fixed; right: 16px; bottom: 16px; z-index: 1000; }`],
 })
 export class PreviewStateSwitcherComponent {
-  readonly preview = inject(PreviewStateService);
+  readonly preview = inject(ManagePreviewScenarioUseCase);
   readonly isDevelopment = isDevMode();
 }

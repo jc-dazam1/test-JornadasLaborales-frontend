@@ -23,3 +23,16 @@ Angular Material workspace for planning labor schedules, reviewing weekly covera
 - API TypeScript build: `npm --prefix services/functions run build`
 
 Local API settings are in `services/functions/local.settings.json` and are ignored by Git. Production PostgreSQL connections use a managed identity token; local development uses `DATABASE_URL`.
+
+## Frontend architecture
+
+The Angular source is organized by responsibility under `services/web/src/app/`:
+
+- `domain/` contains framework-independent business models and types.
+- `application/ports/` defines contracts; `application/use-cases/` coordinates app actions without depending on Angular or infrastructure.
+- `infrastructure/` contains API adapters, Angular DI tokens/providers, and browser-backed preview state.
+- `features/` contains each route's page and feature-specific UI.
+- `presentation/` contains the app shell, routes, theme, and developer preview controls.
+- `shared/ui/` contains reusable UI components shared across features.
+
+Dependencies point inward: features and presentation call application use cases; infrastructure implements application ports and wires dependencies in `app.providers.ts`. Replacing the mock API with a real HTTP adapter should only require changing that provider configuration and implementing the existing `ApiClient` port.

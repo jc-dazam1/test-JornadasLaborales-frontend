@@ -3,9 +3,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
-import { API_CLIENT } from '../../core/api/api-client';
-import { DashboardSummary, DataState } from '../../core/api/models';
-import { DataStateComponent } from '../../shared/data-state.component';
+import { GetDashboardUseCase } from '../../../application/use-cases/get-dashboard.use-case';
+import { DataState } from '../../../application/models/data-state';
+import { DashboardSummary } from '../../../domain/models';
+import { DataStateComponent } from '../../../shared/ui/data-state.component';
 
 @Component({
   selector: 'app-dashboard-page',
@@ -68,7 +69,7 @@ import { DataStateComponent } from '../../shared/data-state.component';
   `,
 })
 export class DashboardPageComponent implements OnInit {
-  private readonly api = inject(API_CLIENT);
+  private readonly getDashboard = inject(GetDashboardUseCase);
   readonly summary = signal<DashboardSummary | null>(null);
   readonly state = signal<DataState>('loading');
   readonly columns = ['employee', 'shift', 'hours', 'team', 'status'];
@@ -78,7 +79,7 @@ export class DashboardPageComponent implements OnInit {
   async load(): Promise<void> {
     this.state.set('loading');
     try {
-      const data = await this.api.getDashboard();
+      const data = await this.getDashboard.execute();
       this.summary.set(data);
       this.state.set(data.schedules.length ? 'data' : 'empty');
     } catch {
