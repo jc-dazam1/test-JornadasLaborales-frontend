@@ -1,36 +1,50 @@
-export type ScheduleStatus = 'Confirmed' | 'Pending';
-export type EmployeeStatus = 'Active' | 'Review';
-
-export interface Schedule {
-  employee: string;
-  shift: string;
-  hours: number;
-  team: string;
-  status: ScheduleStatus;
+export interface Employee {
+  id: number;
+  firstName: string | null;
+  lastName: string | null;
+  email: string | null;
+  position: string | null;
 }
 
-export interface Employee {
-  name: string;
-  position: string;
-  availability: 'Available' | 'On leave';
-  shift: string;
-  status: EmployeeStatus;
-  avatar: string;
+export interface Workday {
+  id: number;
+  employeeId: number;
+  date: string;
+  hoursWorked: number;
+  employeeName: string;
 }
 
 export interface DashboardSummary {
+  employeeCount: number;
   plannedShifts: number;
-  coverage: number;
-  pendingApprovals: number;
   averageHours: number;
-  schedules: Schedule[];
+  schedules: Workday[];
 }
 
-export interface CalendarDay {
-  day: string;
-  team: string;
-  planned: number;
-  status: 'On track' | 'Needs review';
+export type CalendarDay = Workday;
+
+export interface EmployeeInput {
+  firstName: string;
+  lastName: string;
+  email: string;
+  position: string;
+}
+
+export interface WorkdayInput {
+  employeeId: number;
+  date: string;
+  hoursWorked: number;
+}
+
+export interface WorkdayUpdate {
+  date?: string | null;
+  hoursWorked?: number | null;
+}
+
+export interface EmployeeWorkdaysSummary {
+  employeeId: number;
+  employeeName: string | null;
+  workdays: string[] | null;
 }
 
 export interface HealthResponse {
