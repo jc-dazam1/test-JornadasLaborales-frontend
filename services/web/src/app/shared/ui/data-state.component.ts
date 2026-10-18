@@ -3,7 +3,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { DataState } from '../core/api/models';
+import { DataState } from '../../application/models/data-state';
 
 @Component({
   selector: 'app-data-state',

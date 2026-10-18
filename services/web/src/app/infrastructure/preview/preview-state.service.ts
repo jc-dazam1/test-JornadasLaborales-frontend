@@ -1,10 +1,11 @@
 import { Injectable, signal } from '@angular/core';
-import { DataState } from './api/models';
+import { PreviewScenario } from '../../application/ports/preview-scenario';
+import { DataState } from '../../application/models/data-state';
 
 const allowedStates: DataState[] = ['data', 'loading', 'empty', 'error'];
 
 @Injectable({ providedIn: 'root' })
-export class PreviewStateService {
+export class PreviewStateService implements PreviewScenario {
   readonly state = signal<DataState>(this.readInitialState());
 
   setState(state: DataState): void {

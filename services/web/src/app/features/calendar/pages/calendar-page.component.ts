@@ -6,9 +6,10 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
-import { API_CLIENT } from '../../core/api/api-client';
-import { CalendarDay, DataState } from '../../core/api/models';
-import { DataStateComponent } from '../../shared/data-state.component';
+import { GetCalendarUseCase } from '../../../application/use-cases/get-calendar.use-case';
+import { DataState } from '../../../application/models/data-state';
+import { CalendarDay } from '../../../domain/models';
+import { DataStateComponent } from '../../../shared/ui/data-state.component';
 
 @Component({
   selector: 'app-calendar-page',
@@ -50,7 +51,7 @@ import { DataStateComponent } from '../../shared/data-state.component';
   `,
 })
 export class CalendarPageComponent implements OnInit {
-  private readonly api = inject(API_CLIENT);
+  private readonly getCalendar = inject(GetCalendarUseCase);
   readonly days = signal<CalendarDay[]>([]);
   readonly state = signal<DataState>('loading');
   readonly columns = ['day', 'team', 'planned', 'status'];
@@ -64,7 +65,7 @@ export class CalendarPageComponent implements OnInit {
   async load(): Promise<void> {
     this.state.set('loading');
     try {
-      this.days.set(await this.api.getCalendar());
+      this.days.set(await this.getCalendar.execute());
       this.state.set(this.days().length ? 'data' : 'empty');
     } catch {
       this.state.set('error');

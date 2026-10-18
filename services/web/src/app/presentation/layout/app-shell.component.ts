@@ -5,8 +5,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { PreviewStateSwitcherComponent } from './core/preview-state-switcher.component';
-import { ThemeService } from './core/theme.service';
+import { PreviewStateSwitcherComponent } from '../developer-tools/preview-state-switcher.component';
+import { ThemeService } from '../theme/theme.service';
 
 @Component({
   selector: 'app-root',
@@ -35,6 +35,6 @@ import { ThemeService } from './core/theme.service';
     <app-preview-state-switcher />
   `,
 })
-export class AppComponent {
+export class AppShellComponent {
   readonly theme = inject(ThemeService);
 }

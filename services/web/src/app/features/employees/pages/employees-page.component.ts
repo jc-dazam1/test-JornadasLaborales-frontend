@@ -3,9 +3,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
-import { API_CLIENT } from '../../core/api/api-client';
-import { DataState, Employee } from '../../core/api/models';
-import { DataStateComponent } from '../../shared/data-state.component';
+import { GetEmployeesUseCase } from '../../../application/use-cases/get-employees.use-case';
+import { DataState } from '../../../application/models/data-state';
+import { Employee } from '../../../domain/models';
+import { DataStateComponent } from '../../../shared/ui/data-state.component';
 
 @Component({
   selector: 'app-employees-page',
@@ -42,7 +43,7 @@ import { DataStateComponent } from '../../shared/data-state.component';
   `,
 })
 export class EmployeesPageComponent implements OnInit {
-  private readonly api = inject(API_CLIENT);
+  private readonly getEmployees = inject(GetEmployeesUseCase);
   readonly employees = signal<Employee[]>([]);
   readonly state = signal<DataState>('loading');
   readonly columns = ['employee', 'availability', 'shift', 'status', 'actions'];
@@ -52,7 +53,7 @@ export class EmployeesPageComponent implements OnInit {
   async load(): Promise<void> {
     this.state.set('loading');
     try {
-      this.employees.set(await this.api.getEmployees());
+      this.employees.set(await this.getEmployees.execute());
       this.state.set(this.employees().length ? 'data' : 'empty');
     } catch {
       this.state.set('error');
