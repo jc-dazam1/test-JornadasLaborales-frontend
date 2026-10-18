@@ -1,0 +1,45 @@
+openapi: 3.0.3
+info:
+  title: Jornadas Laborales API
+  version: 1.0.0
+  description: Health endpoint for the labor scheduling application.
+servers:
+  - url: http://localhost:7071/api
+paths:
+  /health:
+    get:
+      operationId: getHealth
+      summary: Check API and PostgreSQL health
+      responses:
+        '200':
+          description: PostgreSQL is available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+              example:
+                status: healthy
+                services:
+                  postgresql: healthy
+        '503':
+          description: PostgreSQL is unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+components:
+  schemas:
+    HealthResponse:
+      type: object
+      required: [status, services]
+      properties:
+        status:
+          type: string
+          enum: [healthy, degraded, unhealthy]
+        services:
+          type: object
+          required: [postgresql]
+          properties:
+            postgresql:
+              type: string
+              enum: [healthy, unhealthy]

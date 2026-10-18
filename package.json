@@ -1,0 +1,9 @@
+{
+  "name": "jornadas-laborales",
+  "private": true,
+  "scripts": {
+    "build:web": "npm --prefix services/web run build",
+    "build:api": "npm --prefix services/functions run build",
+    "test": "npm --prefix services/web test"
+  }
+}
