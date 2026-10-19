@@ -1,51 +1,63 @@
 # Jornadas Laborales
 
-Angular Material workspace for planning labor schedules, reviewing weekly coverage, and maintaining the employee roster. The frontend starts with realistic mock data behind a typed API seam; the Azure Functions API currently provides the PostgreSQL health check.
+Espacio de trabajo desarrollado con Angular Material para planificar jornadas laborales, revisar la cobertura semanal y gestionar el listado de empleados. El frontend comienza utilizando datos simulados realistas mediante una capa de abstracción de API tipada; actualmente, la API de Azure Functions proporciona el endpoint para comprobar el estado de conexión con PostgreSQL.
 
-## Prerequisites
+## Requisitos previos
 
-- Node.js 20.19+ or 22.12+, npm, and Azure Functions Core Tools v4
-- Docker Compose for local PostgreSQL
+- Node.js 20.19+ o 22.12+, npm y Azure Functions Core Tools v4.
+- Docker Compose para ejecutar PostgreSQL localmente.
 
-## Local setup
+## Configuración local
 
-1. Copy `.env.example` to `.env`; set `API_BASE_URL` to the backend base URL (for example, `http://localhost:5000/api`) and adjust PostgreSQL values if needed.
-2. Start PostgreSQL with `docker compose up -d postgres`.
-3. Install frontend dependencies with `npm --prefix services/web install`.
-4. Install API dependencies with `npm --prefix services/functions install`.
-5. Start the frontend with `npm --prefix services/web start` and open `http://localhost:4200`.
-6. Start the API in a separate terminal with `npm --prefix services/functions start`; its health endpoint is `http://localhost:7071/api/health`.
+1. Copia el archivo `.env.example` y renómbralo como `.env`. Configura `API_BASE_URL` con la URL base del backend (por ejemplo, `http://localhost:5000/api`) y ajusta los valores de PostgreSQL si es necesario.
+2. Inicia PostgreSQL ejecutando `docker compose up -d postgres`.
+3. Instala las dependencias del frontend con `npm --prefix services/web install`.
+4. Instala las dependencias de la API con `npm --prefix services/functions install`.
+5. Inicia el frontend con `npm --prefix services/web start` y abre `http://localhost:4200` en el navegador.
+6. Inicia la API en una terminal independiente con `npm --prefix services/functions start`. El endpoint para comprobar su estado estará disponible en `http://localhost:7071/api/health`.
 
-## Checks
+## Verificaciones
 
-- Frontend production build: `npm --prefix services/web run build`
-- Frontend tests: `npm --prefix services/web test`
-- API TypeScript build: `npm --prefix services/functions run build`
+- **Compilación de producción del frontend:** `npm --prefix services/web run build`
+- **Pruebas del frontend:** `npm --prefix services/web test`
+- **Compilación de TypeScript de la API:** `npm --prefix services/functions run build`
 
-## Frontend Docker image
+## Imagen Docker del frontend
 
-Build the image from the repository root. The frontend container proxies `/api` to a backend published on host port `7071`:
+Construye la imagen desde la raíz del repositorio. El contenedor del frontend utiliza un proxy para redirigir las solicitudes a `/api` hacia un backend publicado en el puerto `7071` del host.
 
 ```sh
 docker build -f services/web/Dockerfile -t jornadas-laborales-web .
 docker run --rm -p 8080:80 jornadas-laborales-web
 ```
 
-Open `http://localhost:8080`. The browser sends API requests to the same origin, and Nginx forwards them to `http://host.docker.internal:7071/api`.
+Abre `http://localhost:8080` en el navegador. El navegador envía las solicitudes a la API utilizando el mismo origen, y Nginx las redirige a `http://host.docker.internal:7071/api`.
 
-Local API settings are in `services/functions/local.settings.json` and are ignored by Git. Production PostgreSQL connections use a managed identity token; local development uses `DATABASE_URL`.
+La configuración local de la API se encuentra en `services/functions/local.settings.json` y está excluida del control de versiones de Git.
 
-## Frontend architecture
+En producción, las conexiones a PostgreSQL utilizan un token de identidad administrada (*Managed Identity*). Para el desarrollo local se utiliza la variable `DATABASE_URL`.
 
-The Angular source is organized by responsibility under `services/web/src/app/`:
+## Arquitectura del frontend
 
-- `domain/` contains framework-independent business models and types.
-- `application/ports/` defines contracts; `application/use-cases/` coordinates app actions without depending on Angular or infrastructure.
-- `infrastructure/` contains API adapters, Angular DI tokens/providers, and browser-backed preview state.
-- `features/` contains each route's page and feature-specific UI.
-- `presentation/` contains the app shell, routes, theme, and developer preview controls.
-- `shared/ui/` contains reusable UI components shared across features.
+El código fuente de Angular está organizado por responsabilidades dentro de `services/web/src/app/`:
 
-Dependencies point inward: features and presentation call application use cases; infrastructure implements application ports and wires dependencies in `app.providers.ts`. Replacing the mock API with a real HTTP adapter should only require changing that provider configuration and implementing the existing `ApiClient` port.
+- **`domain/`**: contiene los modelos y tipos de negocio independientes de cualquier framework.
+- **`application/ports/`**: define los contratos de la aplicación. **`application/use-cases/`** coordina las acciones de la aplicación sin depender de Angular ni de la infraestructura.
+- **`infrastructure/`**: contiene los adaptadores de API, los tokens y proveedores de inyección de dependencias de Angular, y el estado de previsualización almacenado en el navegador.
+- **`features/`**: contiene la página correspondiente a cada ruta y los componentes de interfaz específicos de cada funcionalidad.
+- **`presentation/`**: contiene la estructura principal de la aplicación (*app shell*), las rutas, el tema visual y los controles de previsualización para desarrolladores.
+- **`shared/ui/`**: contiene los componentes de interfaz reutilizables y compartidos entre las diferentes funcionalidades.
 
-The frontend reads `API_BASE_URL` from the workspace `.env` when starting or building. In development, Angular proxies `/api` to the configured backend to avoid browser CORS restrictions. Production builds use the configured backend URL directly, so that deployment must allow the frontend origin or provide a reverse proxy.
+### Flujo de dependencias
+
+Las dependencias apuntan hacia el interior de la arquitectura: las funcionalidades y la capa de presentación utilizan los casos de uso de la aplicación; la infraestructura implementa los contratos definidos en los puertos de aplicación y configura las dependencias en `app.providers.ts`.
+
+Para sustituir la API simulada por un adaptador HTTP real, solo debería ser necesario modificar la configuración de los proveedores e implementar el contrato existente de `ApiClient`.
+
+## Configuración de la API en el frontend
+
+El frontend lee la variable `API_BASE_URL` del archivo `.env` del espacio de trabajo al iniciar o compilar la aplicación.
+
+Durante el desarrollo, Angular utiliza un proxy para redirigir las solicitudes a `/api` hacia el backend configurado, evitando las restricciones de CORS del navegador.
+
+En las compilaciones de producción, el frontend utiliza directamente la URL del backend configurada. Por lo tanto, el despliegue debe permitir las solicitudes desde el origen del frontend o proporcionar un proxy inverso (*reverse proxy*) para gestionar dichas solicitudes.
