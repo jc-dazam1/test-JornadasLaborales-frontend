@@ -22,6 +22,17 @@ Angular Material workspace for planning labor schedules, reviewing weekly covera
 - Frontend tests: `npm --prefix services/web test`
 - API TypeScript build: `npm --prefix services/functions run build`
 
+## Frontend Docker image
+
+Build the image from the repository root. The frontend container proxies `/api` to a backend published on host port `7071`:
+
+```sh
+docker build -f services/web/Dockerfile -t jornadas-laborales-web .
+docker run --rm -p 8080:80 jornadas-laborales-web
+```
+
+Open `http://localhost:8080`. The browser sends API requests to the same origin, and Nginx forwards them to `http://host.docker.internal:7071/api`.
+
 Local API settings are in `services/functions/local.settings.json` and are ignored by Git. Production PostgreSQL connections use a managed identity token; local development uses `DATABASE_URL`.
 
 ## Frontend architecture

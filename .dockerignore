@@ -1,0 +1,12 @@
+.git
+.angular
+**/.angular
+node_modules
+**/node_modules
+dist
+**/dist
+tmp
+.env
+.env.*
+!.env.example
+coverage
